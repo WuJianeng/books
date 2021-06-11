@@ -1,18 +1,37 @@
 package org.jianeng.books.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jianeng.books.dto.UserInfo;
+import org.jianeng.books.mapper.RoleMapper;
 import org.jianeng.books.mapper.UserMapper;
+import org.jianeng.books.mapper.UserRoleMapper;
+import org.jianeng.books.model.Role;
 import org.jianeng.books.model.User;
+import org.jianeng.books.model.UserRole;
 import org.jianeng.books.model.exception.RequestValidationFailedException;
 import org.jianeng.books.model.exception.UserAlreadyExsitException;
+import org.jianeng.books.utils.TokenUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /**
@@ -22,22 +41,53 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService {
 
     public static final String USERNAME = "username:";
+
+    @Autowired
     private UserMapper userMapper;
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    @Autowired
+    private UserRoleMapper userRoleMapper;
+
+    @Autowired
+    private RoleMapper roleMapper;
+
+    @Autowired
+    private TokenUtils tokenUtils;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+
+    private Logger logger = LoggerFactory.getLogger(UserService.class);
 
     /**
      *
-     * @param user
+     * @param username
+     * @param password
      * @return
      */
-    public Boolean login(User user) {
-        logger.info("username: " + user.getName() + " password: " + user.getPassword());
-        return true;
+    public String login(String username, String password) {
+        logger.info("尝试登录 username: " + username + " password: " + password);
+        // 验证用户名和密码是否正确
+        UserDetails user = getUserByUserName(username);
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new BadCredentialsException("密码不正确");
+        }
+
+        // 根据用户信息生成 token
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        String token = tokenUtils.generateToken(user);
+
+        return token;
     }
 
     /**
@@ -45,7 +95,7 @@ public class UserService {
      * @param userId
      * @return
      */
-    public User getUserById(Long userId) {
+    public User getUserById(Integer userId) {
         return userMapper.selectById(userId);
     }
 
@@ -59,9 +109,15 @@ public class UserService {
             throw new RequestValidationFailedException(ImmutableMap.of("username", userName));
         }
         userName = userName.trim();
-        QueryWrapper wrapper = new QueryWrapper();
-        wrapper.eq("name", userName);
-        return userMapper.selectOne(wrapper);
+        User user = userMapper.selectByMap(ImmutableMap.of("name", userName)).get(0);
+
+        if (user == null) {
+            throw new UsernameNotFoundException("用户名不存在: " + userName);
+        }
+
+        // select roles by user_role
+        setUserDetailsByUserId(user);
+        return user;
     }
 
     /**
@@ -77,9 +133,13 @@ public class UserService {
         }
         ensureUserNameNotExist(user.getName());
 
+        // 将密码加密
+        String encoded = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encoded);
         user.setId(null);
         userMapper.insert(user);
         logger.info("创建用户 name: " + user.getName() + " email: " + user.getEmail());
+        logger.info(user.toString());
         return true;
     }
 
@@ -88,6 +148,7 @@ public class UserService {
      * @param user
      * @return
      */
+    @Transactional(rollbackFor = Exception.class)
     public boolean updateUser(User user) {
         if (user.getId() == null || user.getName() == null || user.getName().trim().isEmpty()) {
             throw new RequestValidationFailedException(ImmutableMap.of("user is illegal.", user));
@@ -105,6 +166,10 @@ public class UserService {
         return true;
     }
 
+    /**
+     * 确保用户名不存在，如果存在则抛出异常
+     * @param username
+     */
     private void ensureUserNameNotExist(String username) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("name", username);
@@ -112,5 +177,24 @@ public class UserService {
         if (user != null) {
             throw new UserAlreadyExsitException(ImmutableMap.of("username", username));
         }
+    }
+
+    /**
+     * 获取用户详细信息，包含权限
+     * @param user
+     * @return
+     */
+    private User setUserDetailsByUserId(User user) {
+        List<UserRole> userRoles = userRoleMapper.selectByMap(ImmutableMap.of("user_id", user.getId()));
+        logger.info("userRoles: " + userRoles);
+        List<Integer> ids = userRoles.stream().map(UserRole::getRoleId).collect(Collectors.toList());
+        logger.info("ids: " + ids);
+        if (ids == null || ids.isEmpty()) {
+            return user;
+        }
+        List<Role> roles = roleMapper.selectBatchIds(ids);
+
+        user.setRoles(roles);
+        return user;
     }
 }

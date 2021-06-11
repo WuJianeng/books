@@ -1,7 +1,7 @@
 package org.jianeng.books;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.test.context.SpringBootTest;
 
 /**
@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
  * @date 2021/5/14 16:17
  */
 @SpringBootTest
+@MapperScan(basePackages = "org.jianeng.books.mapper")
 class BooksApplicationTests {
 
     @Test

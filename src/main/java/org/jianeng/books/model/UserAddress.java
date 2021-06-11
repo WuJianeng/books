@@ -3,6 +3,7 @@ package org.jianeng.books.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * @author wu_jianeng@foxmail.com
@@ -12,9 +13,11 @@ import lombok.Data;
 @Data
 public class UserAddress {
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
-    private Long userId;
+    @Value("user_id")
+    private Integer userId;
 
+    @Value("address")
     private String address;
 }

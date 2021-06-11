@@ -17,8 +17,8 @@ import java.util.List;
  * @date 2021/5/25 21:45
  */
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookClassService {
+    @Autowired
     private BookClassMapper bookClassMapper;
 
     /**
@@ -26,7 +26,7 @@ public class BookClassService {
      * @param id
      * @return
      */
-    public BookClass getBookClassById(Long id) {
+    public BookClass getBookClassById(Integer id) {
         BookClass bookClass = bookClassMapper.selectById(id);
         if (bookClass == null) {
             throw new ResourceNotFoundException(ImmutableMap.of("bookClass id not found", id));
@@ -39,7 +39,7 @@ public class BookClassService {
      * @param userId
      * @return
      */
-    public List<BookClass> getAllBookClassByUserId(Long userId) {
+    public List<BookClass> getAllBookClassByUserId(Integer userId) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("user_id", userId);
         List<BookClass> bookClassList = bookClassMapper.selectList(wrapper);
@@ -52,7 +52,7 @@ public class BookClassService {
      * @param className
      * @return
      */
-    public boolean addBookClass(Long userId, String className) {
+    public boolean addBookClass(Integer userId, String className) {
         if (className == null || className.trim().isEmpty()) {
             throw new RequestValidationFailedException(ImmutableMap.of("illegal book class name", className));
         }
@@ -79,7 +79,7 @@ public class BookClassService {
      * @param className
      * @return
      */
-    public boolean updateBookClass(Long id, String className) {
+    public boolean updateBookClass(Integer id, String className) {
         if (className == null || className.trim().isEmpty()) {
             throw new RequestValidationFailedException(ImmutableMap.of("class name is illegal.", className));
         }
@@ -97,7 +97,7 @@ public class BookClassService {
      * @param id
      * @return
      */
-    public boolean deleteBookClass(Long id) {
+    public boolean deleteBookClass(Integer id) {
         int res = bookClassMapper.deleteById(id);
         if (res <= 0) {
             throw new RequestValidationFailedException(ImmutableMap.of("id is illegal.", id));

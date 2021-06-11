@@ -30,7 +30,7 @@ public class UserAddressService {
      * @param userId
      * @return
      */
-    public List<UserAddress> getUserAddressListByUserId(Long userId) {
+    public List<UserAddress> getUserAddressListByUserId(Integer userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id", userId);
         List<UserAddress> userAddressList = userAddressMapper.selectList(queryWrapper);
@@ -42,7 +42,7 @@ public class UserAddressService {
      * @param addressId
      * @return
      */
-    public UserAddress getUserAddressByAddressId(Long addressId) {
+    public UserAddress getUserAddressByAddressId(Integer addressId) {
         UserAddress address = userAddressMapper.selectById(addressId);
         if (address == null) {
             throw new ResourceNotFoundException(ImmutableMap.of("addressId:", addressId));
@@ -56,7 +56,7 @@ public class UserAddressService {
      * @param address
      * @return 已存在该地址时返回 false, 插入成功返回 true
      */
-    public boolean addUserAddress(Long userId, String address) {
+    public boolean addUserAddress(Integer userId, String address) {
         if (address == null || address.trim().isEmpty()) {
             throw new RequestValidationFailedException(ImmutableMap.of("address", address));
         } else {
@@ -85,7 +85,7 @@ public class UserAddressService {
      * @param address
      * @return
      */
-    public boolean updateUserAddress(Long addressId, String address) {
+    public boolean updateUserAddress(Integer addressId, String address) {
         if (addressId == null || address == null || address.trim().isEmpty()) {
             throw new RequestValidationFailedException(ImmutableMap.of("address_id:", addressId, "address:", address));
         }
@@ -103,7 +103,7 @@ public class UserAddressService {
      * @param id
      * @return
      */
-    public boolean deleteUserAddress(Long id) {
+    public boolean deleteUserAddress(Integer id) {
         int res = userAddressMapper.deleteById(id);
         if (res <= 0) {
             throw  new RequestValidationFailedException(ImmutableMap.of("id is illegal.", id));

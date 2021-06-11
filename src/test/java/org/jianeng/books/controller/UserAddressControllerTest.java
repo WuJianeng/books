@@ -75,7 +75,7 @@ public class UserAddressControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        UserAddress userAddress = userAddressService.getUserAddressByAddressId(1L);
+        UserAddress userAddress = userAddressService.getUserAddressByAddressId(1);
         Assert.assertEquals("北京市西二旗", userAddress.getAddress());
     }
 
@@ -89,7 +89,7 @@ public class UserAddressControllerTest {
                 .andDo(MockMvcResultHandlers.print())
                 .andReturn();
 
-        List<UserAddress> userAddressList = userAddressService.getUserAddressListByUserId(1L);
+        List<UserAddress> userAddressList = userAddressService.getUserAddressListByUserId(1);
         Assert.assertTrue(userAddressList.size() > 0);
 
         userAddressList.forEach(address -> logger.info(address.toString()));

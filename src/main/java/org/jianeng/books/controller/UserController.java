@@ -1,15 +1,21 @@
 package org.jianeng.books.controller;
 
-import lombok.RequiredArgsConstructor;
+import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.annotations.Param;
+import org.jianeng.books.dto.UserInfo;
+import org.jianeng.books.dto.UserLoginParam;
 import org.jianeng.books.model.User;
 import org.jianeng.books.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @author wu_jianeng@foxmail.com
@@ -24,17 +30,26 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Value("${jwt.tokenHeader}")
+    private String tokenHeader;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     @PostMapping("/login")
-    public ResponseEntity<Boolean> login(@RequestBody User user) {
-        Boolean res = userService.login(user);
-        return ResponseEntity.ok(res);
+    public ResponseEntity<Map> login(@RequestBody UserLoginParam userLoginParam) {
+        String username = userLoginParam.getUsername();
+        String password = userLoginParam.getPassword();
+
+        String token = userService.login(username, password);
+
+        return ResponseEntity.ok(ImmutableMap.of("token", token, "tokenHead", tokenHead));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> queryUserById(@PathVariable("id") Long id) {
+    public ResponseEntity<User> queryUserById(@PathVariable("id") Integer id) {
         User user = userService.getUserById(id);
         System.out.println(user.toString());
         return ResponseEntity.ok(user);
@@ -46,7 +61,7 @@ public class UserController {
         return ResponseEntity.ok(user);
     }
 
-    @PostMapping("/add")
+    @PostMapping("/register")
     public ResponseEntity<Boolean> registerUser(@RequestParam("name")String userName,
                                                 @RequestParam("password")String password,
                                                 @RequestParam("email")String email,

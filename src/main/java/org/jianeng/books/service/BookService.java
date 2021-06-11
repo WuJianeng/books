@@ -19,9 +19,10 @@ import java.util.List;
  */
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class BookService {
+    @Autowired
     private BookMapper bookMapper;
+    @Autowired
     private BookClassMapper bookClassMapper;
 
     /**
@@ -29,7 +30,7 @@ public class BookService {
      * @param userId
      * @return
      */
-    public List<Book> getUserBooksByUserId(long userId) {
+    public List<Book> getUserBooksByUserId(int userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id", userId);
         List<Book> books = bookMapper.selectList(queryWrapper);
@@ -42,7 +43,7 @@ public class BookService {
      * @param bookName
      * @return
      */
-    public Book getUserBookByUserIdAndBookName(long userId, String bookName) {
+    public Book getUserBookByUserIdAndBookName(int userId, String bookName) {
         QueryWrapper wrapper = new QueryWrapper();
         wrapper.eq("user_id", userId);
         wrapper.eq("book_name", bookName.trim());
@@ -60,7 +61,7 @@ public class BookService {
      * @param bookId
      * @return
      */
-    public Book getBookByBookId(Long bookId) {
+    public Book getBookByBookId(Integer bookId) {
         Book book = bookMapper.selectById(bookId);
         return book;
     }
@@ -70,7 +71,7 @@ public class BookService {
      * @param userId
      * @return
      */
-    public List<BookClass> getAllBookClassesByUserId(long userId) {
+    public List<BookClass> getAllBookClassesByUserId(int userId) {
         QueryWrapper queryWrapper = new QueryWrapper();
         queryWrapper.eq("user_id", userId);
         List<BookClass> bookClassList = bookClassMapper.selectList(queryWrapper);
@@ -123,7 +124,7 @@ public class BookService {
      * @param bookId
      * @return
      */
-    public boolean deleteUserBook(Long bookId) {
+    public boolean deleteUserBook(Integer bookId) {
         int res = bookMapper.deleteById(bookId);
         if (res <= 0) {
             throw new RequestValidationFailedException(ImmutableMap.of("book may not exist.", bookId));

@@ -6,29 +6,25 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.io.Serializable;
+
 /**
  * @author wu_jianeng@foxmail.com
- * @date 2021/5/24 21:44
+ * @date 2021/6/7 10:46
  */
-
 @Data
-@TableName("book")
-public class Book {
+@TableName("role")
+public class Role implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer id;
-
-    @Value("user_id")
-    private Integer userId;
-
-    @Value("address_id")
-    private Integer addressId;
-
-    @Value("book_class_id")
-    private Integer bookClassId;
-
-    @Value("book_name")
-    private String bookName;
-
-    @Value("read_page")
-    private int readPage;
+    /**
+     * 角色名称， ROLE_xxx
+     */
+    @Value("role_name")
+    private String roleName;
+    /**
+     * 角色名称，中文
+     */
+    @Value("name")
+    private String name;
 }

@@ -35,7 +35,7 @@ public class BookController {
      * @return
      */
     @GetMapping("/book/all/{user_id}")
-    public ResponseEntity<List<Book>> getAllBookByUserId(@PathVariable("user_id") Long userId) {
+    public ResponseEntity<List<Book>> getAllBookByUserId(@PathVariable("user_id") Integer userId) {
         logger.debug("user id: " + userId);
         List<Book> books = bookService.getUserBooksByUserId(userId);
         logger.debug("books num: " + books.size());
@@ -43,7 +43,7 @@ public class BookController {
     }
 
     @GetMapping("/class/all/{user_id}")
-    public ResponseEntity<List<BookClass>> getAllBookClassByUserId(@PathVariable("user_id")Long userId) {
+    public ResponseEntity<List<BookClass>> getAllBookClassByUserId(@PathVariable("user_id")Integer userId) {
         List<BookClass> bookClassList = bookService.getAllBookClassesByUserId(userId);
         return ResponseEntity.ok(bookClassList);
     }
@@ -54,7 +54,7 @@ public class BookController {
      * @return
      */
     @GetMapping("/book/{id}")
-    public ResponseEntity<Book> getBookByBookId(@PathVariable("id")Long bookId) {
+    public ResponseEntity<Book> getBookByBookId(@PathVariable("id")Integer bookId) {
         Book book = bookService.getBookByBookId(bookId);
         return ResponseEntity.ok(book);
     }
@@ -65,7 +65,7 @@ public class BookController {
      * @return
      */
     @GetMapping("/class/{id}")
-    public ResponseEntity<BookClass> getBookClassByBookClassId(@PathVariable("id")Long bookClassId) {
+    public ResponseEntity<BookClass> getBookClassByBookClassId(@PathVariable("id")Integer bookClassId) {
         BookClass bookClass = bookClassService.getBookClassById(bookClassId);
         return ResponseEntity.ok(bookClass);
     }
@@ -87,7 +87,7 @@ public class BookController {
      * @return
      */
     @PostMapping("/book/delete/{id}")
-    public ResponseEntity<Boolean> deleteBook(@PathVariable Long id) {
+    public ResponseEntity<Boolean> deleteBook(@PathVariable Integer id) {
         boolean res = bookService.deleteUserBook(id);
         return ResponseEntity.ok(res);
     }
@@ -110,7 +110,7 @@ public class BookController {
      * @return
      */
     @PostMapping("/class/add")
-    public ResponseEntity<Boolean> addBookClass(@RequestParam("user_id")Long userId, @RequestParam("book_name")String bookName) {
+    public ResponseEntity<Boolean> addBookClass(@RequestParam("user_id")Integer userId, @RequestParam("book_name")String bookName) {
         boolean res = bookClassService.addBookClass(userId, bookName);
         return ResponseEntity.ok(res);
     }
@@ -121,13 +121,13 @@ public class BookController {
      * @return
      */
     @PostMapping("/class/delete/{id}")
-    public ResponseEntity<Boolean> deleteBookClass(@PathVariable("id")Long id) {
+    public ResponseEntity<Boolean> deleteBookClass(@PathVariable("id")Integer id) {
         boolean res = bookClassService.deleteBookClass(id);
         return ResponseEntity.ok(res);
     }
 
     @PostMapping("/class/update/{book_id}")
-    public ResponseEntity<Boolean> updateBookClassName(@PathVariable("book_id")Long bookId, @RequestParam String class_name) {
+    public ResponseEntity<Boolean> updateBookClassName(@PathVariable("book_id")Integer bookId, @RequestParam String class_name) {
         boolean res = bookClassService.updateBookClass(bookId, class_name);
         return ResponseEntity.ok(res);
     }

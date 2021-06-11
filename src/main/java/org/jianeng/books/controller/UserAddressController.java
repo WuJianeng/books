@@ -21,7 +21,7 @@ public class UserAddressController {
     private UserAddressService userAddressService;
 
     @GetMapping("/{user_id}")
-    public ResponseEntity<List<UserAddress>> getAllUserAddressByUserId(@PathVariable("user_id")Long userId) {
+    public ResponseEntity<List<UserAddress>> getAllUserAddressByUserId(@PathVariable("user_id")Integer userId) {
         List<UserAddress> userAddressList = userAddressService.getUserAddressListByUserId(userId);
         return ResponseEntity.ok(userAddressList);
     }

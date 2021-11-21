@@ -38,6 +38,20 @@ public class UserAddressService {
     }
 
     /**
+     * 基于 userAddress 进行模糊查询所有符合要求的 UserAddress
+     */
+    public List<UserAddress> getUserAddressListByUserAddress(UserAddress userAddress) {
+        String address = userAddress.getAddress();
+        userAddress.setAddress(null);
+        QueryWrapper<UserAddress> wrapper = new QueryWrapper<>(userAddress);
+        if (address != null && !address.trim().equals("")){
+            wrapper.like("address", address);
+        }
+        List<UserAddress> userAddressList = userAddressMapper.selectList(wrapper);
+        return userAddressList;
+    }
+
+    /**
      * 根据地址 id 修改地址信息
      * @param addressId
      * @return
@@ -111,5 +125,4 @@ public class UserAddressService {
             return true;
         }
     }
-
 }

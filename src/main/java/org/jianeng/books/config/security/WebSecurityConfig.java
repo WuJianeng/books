@@ -69,6 +69,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // 禁用缓存
         http.headers().cacheControl();
 
+        http.cors().disable();
+
         http.csrf()// 由于使用的是JWT，我们这里不需要csrf
             .disable()
             .sessionManagement()// 基于token，所以不需要session

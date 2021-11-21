@@ -1,6 +1,7 @@
 package org.jianeng.books.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.jianeng.books.dto.BookInfo;
 import org.jianeng.books.model.Book;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -32,9 +33,35 @@ class BookServiceTest {
     void getUserBooksByUserId() {
         Assert.assertNotNull(bookService);
 
-        List<Book> books = bookService.getUserBooksByUserId(1);
+        List<Book> books = bookService.getBookListByUserId(1);
         Assert.assertNotNull(books);
         logger.info(books.get(0).toString());
         Assert.assertTrue(books.size()>0);
+    }
+
+
+    @Test
+    @Transactional
+    @Rollback
+    void getBookInfoListByUserId() {
+        List<BookInfo> infoList = bookService.getBookInfoListByUserId(1);
+        Assert.assertNotNull(infoList);
+        logger.info(infoList.get(0).toString());
+        Assert.assertTrue(!infoList.isEmpty());
+    }
+
+    @Test
+    @Transactional
+    @Rollback
+    void getBookInfoListByBook() {
+        Book param = new Book();
+        param.setUserId(1);
+        param.setAddressId(1);
+        param.setId(null);
+
+        List<BookInfo> bookInfoList = bookService.getBookInfoListByBook(param);
+        Assert.assertNotNull(bookInfoList);
+        logger.info(bookInfoList.get(0).toString());
+        Assert.assertTrue(!bookInfoList.isEmpty());
     }
 }

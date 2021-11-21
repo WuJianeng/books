@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -44,8 +43,13 @@ public class UserController {
         String password = userLoginParam.getPassword();
 
         String token = userService.login(username, password);
+        User user = userService.getUserByUserName(username);
+        UserInfo info = new UserInfo();
+        info.setUsername(user.getName());
+        info.setUserId(user.getId().toString());
+        info.setEmail(user.getEmail());
 
-        return ResponseEntity.ok(ImmutableMap.of("token", token, "tokenHead", tokenHead));
+        return ResponseEntity.ok(ImmutableMap.of("token", token, "tokenHead", tokenHead, "info", info));
     }
 
     @GetMapping("/{id}")

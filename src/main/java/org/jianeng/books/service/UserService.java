@@ -138,6 +138,13 @@ public class UserService {
         user.setPassword(encoded);
         user.setId(null);
         userMapper.insert(user);
+
+        // userRole
+        UserRole userRole = new UserRole();
+        userRole.setRoleId(2);
+        userRole.setUserId(user.getId());
+        userRoleMapper.insert(userRole);
+
         logger.info("创建用户 name: " + user.getName() + " email: " + user.getEmail());
         logger.info(user.toString());
         return true;

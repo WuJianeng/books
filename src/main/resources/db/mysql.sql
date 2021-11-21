@@ -95,7 +95,7 @@ CREATE TABLE book (
     address_id INT(11) NOT NULL COMMENT '用户地址 id',
     book_class_id INT(11) NOT NULL COMMENT '用户书籍分类 id',
     book_name VARCHAR(64) NOT NULL COMMENT '书名',
-    read_page INT NULL DEFAULT NULL COMMENT '已阅读到的书页数'
+    read_page INT NOT NULL DEFAULT 0 COMMENT '已阅读到的书页数'
 );
 
 INSERT INTO book (id, user_id, address_id, book_class_id, book_name) VALUES

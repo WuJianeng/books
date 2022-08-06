@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jianeng.books.dto.BookInfo;
+import org.jianeng.books.dto.MoveBooks;
 import org.jianeng.books.mapper.BookClassMapper;
 import org.jianeng.books.mapper.BookMapper;
 import org.jianeng.books.model.Book;
@@ -181,6 +182,7 @@ public class BookService {
             throw new RequestValidationFailedException(ImmutableMap.of("无权更改他人信息.", book.getId()));
         }
 
+        book.setTrackTime(System.currentTimeMillis());
         int res = bookMapper.updateById(book);
         if (res <= 0) {
             throw new RequestValidationFailedException(ImmutableMap.of("update fail.", book));
@@ -205,6 +207,7 @@ public class BookService {
         }
 
         book.setId(null);
+        book.setTrackTime(System.currentTimeMillis());
         int res = bookMapper.insert(book);
         if (res <= 0) {
             throw new RequestValidationFailedException(ImmutableMap.of("request fail.", book));

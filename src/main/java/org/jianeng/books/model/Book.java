@@ -33,6 +33,24 @@ public class Book {
     @Value("book_name")
     private String bookName;
 
+    @Value("author_name")
+    private String authorName;
+
     @Value("read_page")
     private Integer readPage;
+
+    @Value("whole_page")
+    private Integer wholePage;
+
+    @Value("comment")
+    private String comment;
+
+    @Value("buy_time")
+    private Long buyTime;
+
+    @Value("read_time")
+    private Long readTime;
+
+    @Value(("track_time"))
+    private Long trackTime;
 }

@@ -1,6 +1,7 @@
 package org.jianeng.books.controller;
 
 import org.jianeng.books.dto.BookInfo;
+import org.jianeng.books.dto.MoveBooks;
 import org.jianeng.books.model.Book;
 import org.jianeng.books.model.BookClass;
 import org.jianeng.books.service.BookClassService;
@@ -144,6 +145,18 @@ public class BookController {
     public ResponseEntity<Boolean> updateBook(@RequestBody Book book) {
         boolean res = bookService.updateUserBookByBookId(book);
         return ResponseEntity.ok(res);
+    }
+
+    @PostMapping("/address/move")
+    public ResponseEntity<Boolean> moveBooks(@RequestBody MoveBooks moveBooks) {
+        for (Integer bookId : moveBooks.getBookIds()) {
+            Book book = new Book();
+            book.setId(bookId);
+            book.setAddressId(moveBooks.getAddressId());
+            book.setUserId(moveBooks.getUserId());
+            bookService.updateUserBookByBookId(book);
+        }
+        return ResponseEntity.ok(true);
     }
 
     /**

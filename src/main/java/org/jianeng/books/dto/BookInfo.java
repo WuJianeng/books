@@ -27,16 +27,25 @@ public class BookInfo {
 
     private String bookName;
 
+    private String authorName;
+
     private Integer readPage;
+
+    private Integer wholePage;
+
+    private String comment;
 
     public static BookInfo from(@NotNull Book book, BookClass bookClass, UserAddress address) {
         BookInfo info = new BookInfo();
         info.setId(book.getId());
         info.setUserId(book.getUserId());
         info.setBookName(book.getBookName());
+        info.setAuthorName(book.getAuthorName());
         info.setAddressId(book.getAddressId());
         info.setBookClassId(book.getBookClassId());
         info.setReadPage(book.getReadPage());
+        info.setWholePage(book.getWholePage());
+        info.setComment(book.getComment());
 
         if (bookClass != null) {
             info.setBookClass(bookClass.getClassName());
